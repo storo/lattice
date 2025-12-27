@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/storo/lettice/pkg/core"
+	"github.com/storo/lattice/pkg/core"
 )
 
 // Default values

@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/storo/lettice/pkg/agent"
-	"github.com/storo/lettice/pkg/core"
+	"github.com/storo/lattice/pkg/agent"
+	"github.com/storo/lattice/pkg/core"
 )
 
 func TestLocalRegistry_Register(t *testing.T) {

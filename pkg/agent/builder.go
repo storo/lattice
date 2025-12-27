@@ -2,9 +2,9 @@ package agent
 
 import (
 	"github.com/google/uuid"
-	"github.com/storo/lettice/pkg/core"
-	"github.com/storo/lettice/pkg/provider"
-	"github.com/storo/lettice/pkg/storage"
+	"github.com/storo/lattice/pkg/core"
+	"github.com/storo/lattice/pkg/provider"
+	"github.com/storo/lattice/pkg/storage"
 )
 
 // Default values

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/storo/lettice/pkg/core"
+	"github.com/storo/lattice/pkg/core"
 )
 
 func TestCycleDetector_Check_NoCycle(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/storo/lettice/pkg/core"
+	"github.com/storo/lattice/pkg/core"
 )
 
 // ReAct pattern errors

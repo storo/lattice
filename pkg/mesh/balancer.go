@@ -3,7 +3,7 @@ package mesh
 import (
 	"sync/atomic"
 
-	"github.com/storo/lettice/pkg/core"
+	"github.com/storo/lattice/pkg/core"
 )
 
 // Balancer selects an agent from a list of providers.

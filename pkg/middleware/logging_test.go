@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/storo/lettice/pkg/agent"
-	"github.com/storo/lettice/pkg/provider"
+	"github.com/storo/lattice/pkg/agent"
+	"github.com/storo/lattice/pkg/provider"
 )
 
 func TestLoggingMiddleware(t *testing.T) {

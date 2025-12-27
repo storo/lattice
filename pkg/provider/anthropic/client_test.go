@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/storo/lettice/pkg/core"
-	"github.com/storo/lettice/pkg/provider"
+	"github.com/storo/lattice/pkg/core"
+	"github.com/storo/lattice/pkg/provider"
 )
 
 func TestClient_Name(t *testing.T) {

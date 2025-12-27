@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/storo/lettice/pkg/core"
+	"github.com/storo/lattice/pkg/core"
 )
 
 // Provider is the interface for LLM providers.

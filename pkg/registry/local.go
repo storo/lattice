@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/storo/lettice/pkg/core"
+	"github.com/storo/lattice/pkg/core"
 )
 
 // Local is an in-memory registry implementation.

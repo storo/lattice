@@ -25,14 +25,14 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/storo/lettice/pkg/agent"
-	"github.com/storo/lettice/pkg/core"
-	"github.com/storo/lettice/pkg/mesh"
-	"github.com/storo/lettice/pkg/middleware"
-	"github.com/storo/lettice/pkg/protocol/http"
-	"github.com/storo/lettice/pkg/provider"
-	"github.com/storo/lettice/pkg/provider/anthropic"
-	"github.com/storo/lettice/pkg/security"
+	"github.com/storo/lattice/pkg/agent"
+	"github.com/storo/lattice/pkg/core"
+	"github.com/storo/lattice/pkg/mesh"
+	"github.com/storo/lattice/pkg/middleware"
+	"github.com/storo/lattice/pkg/protocol/http"
+	"github.com/storo/lattice/pkg/provider"
+	"github.com/storo/lattice/pkg/provider/anthropic"
+	"github.com/storo/lattice/pkg/security"
 )
 
 func main() {

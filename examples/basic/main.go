@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/storo/lettice"
-	"github.com/storo/lettice/pkg/provider"
+	"github.com/storo/lattice"
+	"github.com/storo/lattice/pkg/provider"
 )
 
 func main() {

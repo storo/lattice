@@ -5,9 +5,9 @@ import (
 	"sync"
 
 	"github.com/google/uuid"
-	"github.com/storo/lettice/pkg/agent"
-	"github.com/storo/lettice/pkg/core"
-	"github.com/storo/lettice/pkg/registry"
+	"github.com/storo/lattice/pkg/agent"
+	"github.com/storo/lattice/pkg/core"
+	"github.com/storo/lattice/pkg/registry"
 )
 
 // Mesh is the central orchestrator for the agent mesh.

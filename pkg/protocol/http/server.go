@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/storo/lettice/pkg/core"
-	"github.com/storo/lettice/pkg/mesh"
-	"github.com/storo/lettice/pkg/security"
+	"github.com/storo/lattice/pkg/core"
+	"github.com/storo/lattice/pkg/mesh"
+	"github.com/storo/lattice/pkg/security"
 )
 
 // Server provides an HTTP API for the mesh.

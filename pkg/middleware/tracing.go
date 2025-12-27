@@ -3,8 +3,8 @@ package middleware
 import (
 	"context"
 
-	"github.com/storo/lettice/pkg/core"
-	"github.com/storo/lettice/pkg/protocol"
+	"github.com/storo/lattice/pkg/core"
+	"github.com/storo/lattice/pkg/protocol"
 )
 
 // TracingAgent wraps an agent with distributed tracing.

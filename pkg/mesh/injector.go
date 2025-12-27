@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/storo/lettice/pkg/core"
-	"github.com/storo/lettice/pkg/registry"
+	"github.com/storo/lattice/pkg/core"
+	"github.com/storo/lattice/pkg/registry"
 )
 
 // Injector creates delegation tools for agents.

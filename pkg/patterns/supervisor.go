@@ -5,7 +5,7 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/storo/lettice/pkg/core"
+	"github.com/storo/lattice/pkg/core"
 )
 
 // Supervisor errors

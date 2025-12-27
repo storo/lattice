@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/storo/lettice/pkg/core"
-	"github.com/storo/lettice/pkg/provider"
+	"github.com/storo/lattice/pkg/core"
+	"github.com/storo/lattice/pkg/provider"
 )
 
 func TestAgent_Run_Basic(t *testing.T) {

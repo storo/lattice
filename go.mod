@@ -1,4 +1,4 @@
-module github.com/storo/lettice
+module github.com/storo/lattice
 
 go 1.25.1
 

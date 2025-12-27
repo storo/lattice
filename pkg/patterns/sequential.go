@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/storo/lettice/pkg/core"
+	"github.com/storo/lattice/pkg/core"
 )
 
 // Pipeline errors

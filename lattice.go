@@ -21,13 +21,13 @@
 package lattice
 
 import (
-	"github.com/storo/lettice/pkg/agent"
-	"github.com/storo/lettice/pkg/core"
-	"github.com/storo/lettice/pkg/mesh"
-	"github.com/storo/lettice/pkg/patterns"
-	"github.com/storo/lettice/pkg/provider"
-	"github.com/storo/lettice/pkg/registry"
-	"github.com/storo/lettice/pkg/security"
+	"github.com/storo/lattice/pkg/agent"
+	"github.com/storo/lattice/pkg/core"
+	"github.com/storo/lattice/pkg/mesh"
+	"github.com/storo/lattice/pkg/patterns"
+	"github.com/storo/lattice/pkg/provider"
+	"github.com/storo/lattice/pkg/registry"
+	"github.com/storo/lattice/pkg/security"
 )
 
 // Re-export core types for convenience
