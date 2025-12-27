@@ -1,5 +1,7 @@
 package core
 
+import "sort"
+
 // Capability represents a skill or functionality that an agent provides or needs.
 type Capability string
 
@@ -45,12 +47,16 @@ func (s *CapabilitySet) Has(cap Capability) bool {
 	return ok
 }
 
-// List returns all capabilities in the set.
+// List returns all capabilities in the set, sorted alphabetically for deterministic output.
 func (s *CapabilitySet) List() []Capability {
 	result := make([]Capability, 0, len(s.caps))
 	for cap := range s.caps {
 		result = append(result, cap)
 	}
+	// Sort for deterministic order
+	sort.Slice(result, func(i, j int) bool {
+		return string(result[i]) < string(result[j])
+	})
 	return result
 }
 

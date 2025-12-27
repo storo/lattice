@@ -2,7 +2,7 @@ package storage
 
 import (
 	"context"
-	"strings"
+	"path"
 	"sync"
 	"time"
 )
@@ -132,24 +132,16 @@ func (s *MemoryStore) Close() error {
 }
 
 // matchPattern checks if a key matches a glob pattern.
-// Supports * as a wildcard for any characters.
+// Uses path.Match which supports:
+// - * matches any sequence of non-separator characters
+// - ? matches any single character
+// - [abc] matches one character from the set
+// - [a-z] matches one character from the range
 func matchPattern(pattern, key string) bool {
-	if pattern == "*" {
-		return true
+	matched, err := path.Match(pattern, key)
+	if err != nil {
+		// Invalid pattern, fall back to exact match
+		return pattern == key
 	}
-
-	// Simple prefix matching for patterns ending with *
-	if strings.HasSuffix(pattern, "*") {
-		prefix := strings.TrimSuffix(pattern, "*")
-		return strings.HasPrefix(key, prefix)
-	}
-
-	// Simple suffix matching for patterns starting with *
-	if strings.HasPrefix(pattern, "*") {
-		suffix := strings.TrimPrefix(pattern, "*")
-		return strings.HasSuffix(key, suffix)
-	}
-
-	// Exact match
-	return pattern == key
+	return matched
 }

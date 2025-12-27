@@ -212,3 +212,58 @@ func TestMemoryStore_ConcurrentAccess(t *testing.T) {
 	<-done
 	<-done
 }
+
+func TestMemoryStore_Keys_AdvancedPatterns(t *testing.T) {
+	ctx := context.Background()
+	store := NewMemoryStore()
+	defer store.Close()
+
+	// Set up Redis-like namespaced keys
+	store.Set(ctx, "user:123:settings", []byte("v1"), 0)
+	store.Set(ctx, "user:456:settings", []byte("v2"), 0)
+	store.Set(ctx, "user:123:profile", []byte("v3"), 0)
+	store.Set(ctx, "agent:abc:state", []byte("v4"), 0)
+
+	tests := []struct {
+		pattern  string
+		expected int
+	}{
+		{"user:*:settings", 2}, // Wildcard in middle
+		{"user:123:*", 2},      // Suffix wildcard
+		{"*:settings", 2},      // Prefix wildcard
+		{"user:*", 3},          // All user keys
+		{"agent:*", 1},         // Agent keys
+		{"*", 4},               // All keys
+		{"nonexistent:*", 0},   // No match
+	}
+
+	for _, tt := range tests {
+		keys, err := store.Keys(ctx, tt.pattern)
+		if err != nil {
+			t.Fatalf("pattern %s: failed: %v", tt.pattern, err)
+		}
+		if len(keys) != tt.expected {
+			t.Errorf("pattern %s: expected %d keys, got %d (%v)",
+				tt.pattern, tt.expected, len(keys), keys)
+		}
+	}
+}
+
+func TestMemoryStore_Keys_QuestionMark(t *testing.T) {
+	ctx := context.Background()
+	store := NewMemoryStore()
+	defer store.Close()
+
+	store.Set(ctx, "key1", []byte("v1"), 0)
+	store.Set(ctx, "key2", []byte("v2"), 0)
+	store.Set(ctx, "key10", []byte("v3"), 0)
+
+	// ? matches single character
+	keys, err := store.Keys(ctx, "key?")
+	if err != nil {
+		t.Fatalf("failed: %v", err)
+	}
+	if len(keys) != 2 {
+		t.Errorf("expected 2 keys matching 'key?', got %d (%v)", len(keys), keys)
+	}
+}

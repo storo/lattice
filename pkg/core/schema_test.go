@@ -204,3 +204,117 @@ func TestSchemaFromStruct_ArrayAndMap(t *testing.T) {
 		t.Errorf("expected tags type object, got %s", tagsProp.Type)
 	}
 }
+
+func TestSchemaFromStruct_NestedStruct(t *testing.T) {
+	type Address struct {
+		Street string `json:"street" schema:"Street name"`
+		City   string `json:"city" schema:"City name"`
+	}
+	type Person struct {
+		Name    string  `json:"name" schema:"Person name"`
+		Address Address `json:"address" schema:"Person address"`
+	}
+
+	schema := SchemaFromStruct(Person{})
+
+	// Parse as raw JSON to check nested structure
+	var raw map[string]any
+	if err := json.Unmarshal(schema, &raw); err != nil {
+		t.Fatalf("failed to parse schema: %v", err)
+	}
+
+	props, ok := raw["properties"].(map[string]any)
+	if !ok {
+		t.Fatal("expected properties to exist")
+	}
+
+	addrProp, ok := props["address"].(map[string]any)
+	if !ok {
+		t.Fatal("expected address property to exist")
+	}
+
+	if addrProp["type"] != "object" {
+		t.Errorf("expected address type object, got %v", addrProp["type"])
+	}
+
+	// Check nested properties exist
+	addrProps, ok := addrProp["properties"].(map[string]any)
+	if !ok {
+		t.Fatal("expected address to have nested properties")
+	}
+
+	if _, ok := addrProps["street"]; !ok {
+		t.Error("expected street property in nested address")
+	}
+	if _, ok := addrProps["city"]; !ok {
+		t.Error("expected city property in nested address")
+	}
+}
+
+func TestSchemaFromStruct_DeterministicOrder(t *testing.T) {
+	type TestStruct struct {
+		Zebra string `json:"zebra"`
+		Alpha string `json:"alpha"`
+		Mango string `json:"mango"`
+	}
+
+	// Generate schema multiple times and check consistency
+	schema1 := string(SchemaFromStruct(TestStruct{}))
+	schema2 := string(SchemaFromStruct(TestStruct{}))
+	schema3 := string(SchemaFromStruct(TestStruct{}))
+
+	if schema1 != schema2 || schema2 != schema3 {
+		t.Error("expected schema generation to be deterministic")
+		t.Logf("schema1: %s", schema1)
+		t.Logf("schema2: %s", schema2)
+		t.Logf("schema3: %s", schema3)
+	}
+
+	// Check that required fields are also sorted
+	var parsed map[string]any
+	if err := json.Unmarshal([]byte(schema1), &parsed); err != nil {
+		t.Fatalf("failed to parse schema: %v", err)
+	}
+
+	required, ok := parsed["required"].([]any)
+	if !ok {
+		t.Fatal("expected required array")
+	}
+
+	// Should be alphabetically sorted: alpha, mango, zebra
+	expectedOrder := []string{"alpha", "mango", "zebra"}
+	for i, name := range expectedOrder {
+		if required[i] != name {
+			t.Errorf("expected required[%d] = %s, got %v", i, name, required[i])
+		}
+	}
+}
+
+func TestSchemaFromStruct_PointerToNestedStruct(t *testing.T) {
+	type Config struct {
+		Timeout int `json:"timeout" schema:"Timeout in seconds"`
+	}
+	type Settings struct {
+		Name   string  `json:"name"`
+		Config *Config `json:"config" schema:"Optional config"`
+	}
+
+	schema := SchemaFromStruct(Settings{})
+
+	var raw map[string]any
+	if err := json.Unmarshal(schema, &raw); err != nil {
+		t.Fatalf("failed to parse schema: %v", err)
+	}
+
+	props := raw["properties"].(map[string]any)
+	configProp := props["config"].(map[string]any)
+
+	if configProp["type"] != "object" {
+		t.Errorf("expected config type object, got %v", configProp["type"])
+	}
+
+	// Should have nested properties
+	if _, ok := configProp["properties"]; !ok {
+		t.Error("expected config to have nested properties")
+	}
+}
