@@ -26,7 +26,7 @@ Enter
 Sleep 2s
 
 # Interactive mode
-Type "./lattice interactive"
+Type "./lattice interactive --api-key demo-key"
 Enter
 Sleep 1s
 
