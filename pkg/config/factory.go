@@ -36,7 +36,7 @@ func NewProvider(cfg ProviderConfig) (provider.Provider, error) {
 		return ollama.NewClient(opts...), nil
 
 	case "mock", "":
-		return provider.NewMock(), nil
+		return provider.NewMockWithResponse("Hello! I'm a Lattice AI assistant. I can help you with research, writing, coding, and more. Try connecting me to Ollama for real AI capabilities!"), nil
 
 	default:
 		return nil, fmt.Errorf("unknown provider type: %s", cfg.Type)
