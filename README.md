@@ -5,22 +5,33 @@
 
 Agent Mesh Framework for building distributed AI systems in Go.
 
-Lattice enables creating networks of AI agents that can discover, communicate with, and delegate tasks to each other based on their capabilities.
+## Why Lattice?
 
-## Features
+- **Zero-Config Local AI** - Use [Ollama](https://ollama.com) for free, local LLMs
+- **No Docker Required** - SQLite storage works out of the box
+- **Batteries Included** - Built-in tools (fs, http, shell, time)
+- **Production Ready** - HTTP server with auth, load balancing, cycle detection
 
-- **Agent Mesh**: Network of AI agents with automatic capability-based routing
-- **Cycle Detection**: Prevents infinite loops in agent delegation chains
-- **Load Balancing**: Multiple strategies (RoundRobin, Random, First)
-- **Security**: API Key and JWT authentication with role-based access
-- **HTTP Server**: REST API to expose your mesh
-- **Streaming**: Real-time output from agents
-- **Patterns**: ReAct, Supervisor, Sequential, Parallel execution
+## Getting Started
 
-## Installation
+### Option 1: Local LLMs (Free)
 
 ```bash
-go get github.com/storo/lettice
+# 1. Install Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# 2. Pull a model
+ollama pull llama3.2
+
+# 3. Install Lattice
+go get github.com/storo/lattice
+```
+
+### Option 2: Anthropic API
+
+```bash
+export ANTHROPIC_API_KEY=sk-...
+go get github.com/storo/lattice
 ```
 
 ## Quick Start
@@ -31,37 +42,73 @@ package main
 import (
     "context"
     "fmt"
-    "log"
 
-    "github.com/storo/lettice"
-    "github.com/storo/lettice/pkg/provider"
+    "github.com/storo/lattice"
+    "github.com/storo/lattice/pkg/provider/ollama"
+    "github.com/storo/lattice/pkg/tool/builtin"
 )
 
 func main() {
-    ctx := context.Background()
+    // Free local LLM - no API key needed!
+    provider := ollama.NewClient()
 
-    // Create a mock provider (or use anthropic.NewClient for real API)
-    llm := provider.NewMockWithResponse("Hello! I'm a research expert.")
-
-    // Create an agent
-    researcher := lattice.NewAgent("researcher").
-        Model(llm).
-        System("You are a research expert.").
-        Provides(lattice.CapResearch).
+    // Create agent with built-in tools
+    agent := lattice.NewAgent("assistant").
+        Model(provider).
+        System("You are a helpful assistant.").
+        Tools(builtin.DefaultTools()...).
         Build()
 
-    // Create mesh and register agent
-    mesh := lattice.NewMesh(lattice.WithMaxHops(5))
-    mesh.Register(researcher)
-
-    // Run a task
-    result, err := mesh.Run(ctx, "Research AI trends")
-    if err != nil {
-        log.Fatal(err)
-    }
-
+    // Run
+    result, _ := agent.Run(context.Background(), "What time is it?")
     fmt.Println(result.Output)
 }
+```
+
+## CLI Demo
+
+![Lattice Interactive Demo](docs/demo.gif)
+
+```bash
+# Build CLI
+go build -o lattice ./cmd/lattice
+
+# Start server (uses mock provider by default)
+./lattice serve &
+
+# Interactive mode
+./lattice interactive
+```
+
+## Features
+
+- **Agent Mesh**: Network of AI agents with automatic capability-based routing
+- **Multiple Providers**: Ollama (local), Anthropic, or custom
+- **Storage Options**: SQLite, Redis, or in-memory
+- **Built-in Tools**: Time, HTTP, File System, Shell (with security controls)
+- **Cycle Detection**: Prevents infinite loops in agent delegation chains
+- **Load Balancing**: Multiple strategies (RoundRobin, Random, First)
+- **Security**: API Key and JWT authentication with role-based access
+- **HTTP Server**: REST API to expose your mesh
+- **Streaming**: Real-time output from agents
+- **Patterns**: ReAct, Supervisor, Sequential, Parallel execution
+
+## Configuration
+
+```yaml
+# lattice.yaml
+provider:
+  type: ollama          # or: anthropic, mock
+  model: llama3.2
+
+storage:
+  type: sqlite          # or: redis, memory
+  path: ./lattice.db
+
+agents:
+  - name: assistant
+    system: You are helpful.
+    provides: [general]
 ```
 
 ## Documentation
@@ -73,34 +120,6 @@ func main() {
 - [HTTP API](docs/http-api.md) - REST API reference
 - [Patterns](docs/patterns.md) - ReAct, Supervisor, and more
 - [Middleware](docs/middleware.md) - Metrics, logging, tracing
-
-## Example Server
-
-Run a complete server with authentication:
-
-```bash
-# With mock provider
-go run examples/server/main.go
-
-# With Anthropic API
-ANTHROPIC_API_KEY=sk-... go run examples/server/main.go
-```
-
-Test the endpoints:
-
-```bash
-# Health check (no auth)
-curl http://localhost:8080/health
-
-# List agents
-curl -H "X-API-Key: demo-key" http://localhost:8080/agents
-
-# Run on mesh
-curl -X POST -H "X-API-Key: demo-key" \
-  -H "Content-Type: application/json" \
-  -d '{"input":"What is 2+2?"}' \
-  http://localhost:8080/mesh/run
-```
 
 ## Architecture
 
@@ -119,14 +138,16 @@ curl -X POST -H "X-API-Key: demo-key" \
 │          │                │                │                │
 │          └────────────────┼────────────────┘                │
 │                           │                                  │
-│                    Cycle Detection                           │
-│                    Load Balancing                            │
-│                    Tool Injection                            │
+│              Cycle Detection + Load Balancing                │
+│                    + Tool Injection                          │
 └─────────────────────────┬───────────────────────────────────┘
                           │
 ┌─────────────────────────▼───────────────────────────────────┐
 │                       Providers                              │
-│              (Anthropic, Mock, Custom)                       │
+│         (Ollama, Anthropic, Mock) + Built-in Tools           │
+├─────────────────────────────────────────────────────────────┤
+│                        Storage                               │
+│              (SQLite, Redis, Memory)                         │
 └─────────────────────────────────────────────────────────────┘
 ```
 
