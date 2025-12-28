@@ -16,7 +16,6 @@ import (
 	"github.com/storo/lattice/pkg/mesh"
 	"github.com/storo/lattice/pkg/protocol/http"
 	"github.com/storo/lattice/pkg/provider"
-	"github.com/storo/lattice/pkg/provider/anthropic"
 	"github.com/storo/lattice/pkg/security"
 )
 
@@ -56,19 +55,12 @@ func runServe(cmd *cobra.Command, args []string) error {
 		cfg.Server.Addr = serveAddr
 	}
 
-	// Create provider
-	var llmProvider provider.Provider
-	switch cfg.Provider.Type {
-	case "anthropic":
-		if cfg.Provider.APIKey == "" {
-			return fmt.Errorf("ANTHROPIC_API_KEY required for anthropic provider")
-		}
-		log.Println("Using Anthropic provider")
-		llmProvider = anthropic.NewClient(cfg.Provider.APIKey)
-	default:
-		log.Println("Using mock provider")
-		llmProvider = provider.NewMockWithResponse("Mock response from Lattice CLI server.")
+	// Create provider using factory
+	llmProvider, err := config.NewProvider(cfg.Provider)
+	if err != nil {
+		return fmt.Errorf("failed to create provider: %w", err)
 	}
+	log.Printf("Using %s provider", llmProvider.Name())
 
 	// Create mesh
 	var meshOpts []mesh.Option

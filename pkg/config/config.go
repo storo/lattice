@@ -11,6 +11,7 @@ type Config struct {
 	Server   ServerConfig   `yaml:"server"`
 	Mesh     MeshConfig     `yaml:"mesh"`
 	Provider ProviderConfig `yaml:"provider"`
+	Storage  StorageConfig  `yaml:"storage"`
 	Agents   []AgentConfig  `yaml:"agents"`
 	Auth     AuthConfig     `yaml:"auth"`
 }
@@ -28,8 +29,19 @@ type MeshConfig struct {
 
 // ProviderConfig contains LLM provider settings.
 type ProviderConfig struct {
-	Type   string `yaml:"type"`
-	APIKey string `yaml:"api_key"`
+	Type    string `yaml:"type"`
+	APIKey  string `yaml:"api_key"`
+	BaseURL string `yaml:"base_url"`
+	Model   string `yaml:"model"`
+}
+
+// StorageConfig contains storage backend settings.
+type StorageConfig struct {
+	Type     string `yaml:"type"`     // memory | redis | sqlite
+	Path     string `yaml:"path"`     // SQLite database path
+	Address  string `yaml:"address"`  // Redis address
+	Password string `yaml:"password"` // Redis password
+	DB       int    `yaml:"db"`       // Redis DB number
 }
 
 // AgentConfig defines an agent.
@@ -84,6 +96,11 @@ func Load(path string) (*Config, error) {
 		cfg.Provider.APIKey = os.Getenv("ANTHROPIC_API_KEY")
 	}
 
+	// Storage defaults
+	if cfg.Storage.Type == "" {
+		cfg.Storage.Type = "memory"
+	}
+
 	return &cfg, nil
 }
 
@@ -99,6 +116,9 @@ func DefaultConfig() *Config {
 		},
 		Provider: ProviderConfig{
 			Type: "mock",
+		},
+		Storage: StorageConfig{
+			Type: "memory",
 		},
 		Agents: []AgentConfig{
 			{
